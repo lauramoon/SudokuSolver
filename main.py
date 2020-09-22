@@ -34,27 +34,27 @@ def get_puzzles_from_file():
 
     # Read file to get puzzles and solutions
     path = "puzzles\\" + file_name
-    file = open(path, newline='')
-    reader = csv.reader(file)
-    data = []
-    count = 0
+    with open(path, 'r') as file:
+        reader = csv.reader(file)
+        data = []
+        count = 0
 
-    # Read through the rows in the file
-    for row in reader:
-        count += 1
-        # ignore rows without two elements
-        if len(row) != 2:
-            continue
-        puzzle_string = row[0].strip()
-        if len(puzzle_string) != 81 and puzzle_string.isdigit() is False:
-            print(f"Error loading puzzle: puzzle string in row {row}is not 81 digits")
-            continue
-        solution_string = row[1].strip()
-        if len(solution_string) != 81 and solution_string != "0" and solution_string.isdigit() is False:
-            print("Error loading puzzle: solution string in row", row, "is not 81 digits or 0")
-            continue
+        # Read through the rows in the file
+        for row in reader:
+            count += 1
+            # ignore rows without two elements
+            if len(row) != 2:
+                continue
+            puzzle_string = row[0].strip()
+            if len(puzzle_string) != 81 or puzzle_string.isdigit() is False:
+                print(f"Error loading puzzle: puzzle string in row {count} is not 81 digits")
+                continue
+            solution_string = row[1].strip()
+            if (len(solution_string) != 81 and solution_string != "0") or solution_string.isdigit() is False:
+                print(f"Error loading puzzle: solution string in row {count} is not 81 digits or 0")
+                continue
 
-        data.append([puzzle_string, solution_string])
+            data.append([puzzle_string, solution_string])
 
     return file_name, data
 
