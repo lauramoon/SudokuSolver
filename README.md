@@ -12,7 +12,7 @@ A single puzzle may be entered at the command line, or a text file may be placed
 
 If using a text file, each line represents a single puzzle. Each line must contain two strings separated by a comma. The first string is the unsolved puzzle, as 81 digits, no spaces. The second string is either the solution as an 81-digit string or '0' if no solution is provided.
 
-If a solution is provided, the program checks it against hte solution it finds. If no solution is provided, the program prints a representation of the solved puzzle.
+If a solution is provided, the program checks it against the solution it finds. If no solution is provided, the program prints a representation of the solved puzzle.
 
 ## Future Work
 
