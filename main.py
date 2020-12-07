@@ -115,7 +115,7 @@ def main():
 
         # if no solution given, print depiction of puzzle
         if puzzle_list[num][1] == "0":
-            current_puzzle.print_pic()
+            current_puzzle.print_pic("")
 
         # try to solve puzzle
         solve_puzzle(current_puzzle)
@@ -139,12 +139,17 @@ def main():
         # if no solution found:
         else:
             print("Unable to solve puzzle")
-            if current_puzzle.error_found:
-                print("Contradiction found while attempting to solve")
-                print("Puzzle may not be valid")
+            if current_puzzle.no_solution:
+                print("No solution for puzzle")
+                print(current_puzzle.error_description)
+            elif current_puzzle.multiple_solution:
+                print("More than one valid solution found")
+                print(current_puzzle.error_description)
+                current_puzzle.print_pic("completion0")
+                current_puzzle.print_pic("completion1")
             else:
                 print("Progress on puzzle")
-                current_puzzle.print_pic()
+                current_puzzle.print_pic("current")
 
 
 main()

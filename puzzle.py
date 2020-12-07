@@ -16,15 +16,20 @@ class Puzzle:
 
     def __init__(self, name, puzzle_string):
         self.name = name
+        # string of 81 digits representing the original puzzle
         self.puzzle_string = puzzle_string
-        # string of 81 digits if solution found
+        # string of 81 digits representing valid, unique solution
         self.solution = ""
+        # string representing valid but not necessarily unique solution
+        self.valid_completion_list = []
         # dictionary of the 81 boxes in the puzzle
         self.box_map = {}
         # dictionary of the 27 row/column/square axes
         self.axis_map = {}
         self.solved = False
-        self.error_found = False
+        self.no_solution = False
+        self.multiple_solution = False
+        self.error_description = ""
         # List of functions applied to solve puzzle and whether progress made
         self.method_log = []
 
@@ -116,19 +121,6 @@ class Puzzle:
             if self.box_map[i].value == 0:
                 count += 1
         return count
-
-    def tally_zero_error_check(self):
-        """
-        Checks if any boxes have no possible values, returns True if error
-        :return: True if empty tally set exists
-        """
-        # True if there is an error (an empty tally set)
-        error = False
-        for i in range(81):
-            if len(self.box_map[i].tally) == 0:
-                error = True
-                break
-        return error
         
     def print_initial_string(self):
         s = str()
@@ -159,16 +151,45 @@ class Puzzle:
         else:
             print("Puzzle not yet solved; no solution string")
 
-    def print_pic(self):
+    def add_valid_completion(self):
+        if self.num_unknown_boxes() == 0:
+            s = str()
+            for i in range(0, 81):
+                s += str(self.box_map[i].value)
+            if s not in self.valid_completion_list:
+                self.valid_completion_list.append(s)
+            if len(self.valid_completion_list) >= 2:
+                self.multiple_solution = True
+
+        else:
+            print("Puzzle not yet solved; no solution string")
+
+    def update_valid_completion(self, valid_string):
+        if valid_string not in self.valid_completion_list:
+            self.valid_completion_list.append(valid_string)
+            if len(self.valid_completion_list) >= 2:
+                self.multiple_solution = True
+
+    def print_pic(self, version):
         # replace zeros with blanks for display of puzzle
         print_list = []
         for i in range(81):
-            box_value = self.box_map[i].value
+
+            if version == "blank":
+                box_value = self.puzzle_string[i]
+            elif version == "solution":
+                box_value = self.solution[i]
+            elif version == "completion0":
+                box_value = self.valid_completion_list[0][i]
+            elif version == "completion1":
+                box_value = self.valid_completion_list[1][i]
+            else:
+                box_value = str(self.box_map[i].value)
 
             if box_value == 0:
                 print_list.append(" ")
             else:
-                print_list.append(str(box_value))
+                print_list.append(box_value)
 
         # define rows that don't depend on puzzle values
         # width in characters
