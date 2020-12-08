@@ -27,11 +27,15 @@ class Puzzle:
         # dictionary of the 27 row/column/square axes
         self.axis_map = {}
         self.solved = False
+        # All valid puzzles have at least 17 clues initially
+        self.too_few_clues = False
         self.no_solution = False
         self.multiple_solution = False
         self.error_description = ""
         # List of functions applied to solve puzzle and whether progress made
         self.method_log = []
+        # Difficulty level
+        self.difficulty = ""
 
         # initialize axis map
         for i in range(0, 27):
@@ -107,7 +111,7 @@ class Puzzle:
 
     def update_new_known(self, boxID, value):
         """
-        Updates box value, tallies, and unknowns when box value discovered
+        Updates box value, tallies, and axis unknowns when box value discovered
         :param boxID: ID of box whose value has been identified
         :param value: value in box
         """

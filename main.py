@@ -127,6 +127,7 @@ def main():
                 # if solution provided, check if solution found matches
                 if current_puzzle.solution == puzzle_list[num][1]:
                     print("PASS: Solution matches given solution")
+                    print(f"Difficulty rating: {current_puzzle.difficulty}")
                 else:
                     print("FAIL: Solution found does not match solution given")
                     print("Solution found: " + current_puzzle.solution)
@@ -134,7 +135,7 @@ def main():
             # if no solution given, show solution found
             else:
                 print("Solution found:")
-                current_puzzle.print_pic()
+                current_puzzle.print_pic("solution")
 
         # if no solution found:
         else:
@@ -147,9 +148,14 @@ def main():
                 print(current_puzzle.error_description)
                 current_puzzle.print_pic("completion0")
                 current_puzzle.print_pic("completion1")
+            elif current_puzzle.too_few_clues:
+                print("Too few clues; all valid puzzles give at least 17 clues")
             else:
                 print("Progress on puzzle")
                 current_puzzle.print_pic("current")
+
+        for entry in current_puzzle.method_log:
+            print(entry)
 
 
 main()
