@@ -73,9 +73,8 @@ class PuzzleCreationTests(unittest.TestCase):
 
 class PuzzleSolvedTests(unittest.TestCase):
     def setUp(self):
-        self.p = Puzzle("Puzzle Name",
-                        '286000004530208100000030082000400610002315800054006000640070000005904068300000479')
-        solve_puzzle(self.p)
+        self.p = solve_puzzle('286000004530208100000030082000400610002315800054006000640070000005904068300000479',
+                     "Puzzle Name")
 
     def test_puzzle_name(self):
         self.assertEqual(self.p.name, "Puzzle Name")
@@ -104,18 +103,17 @@ class PuzzleSolvedTests(unittest.TestCase):
         self.assertEqual(self.p.error_description, '')
 
     def test_puzzle_method_log(self):
-        self.assertEqual(self.p.method_log[0][0], 'only place')
+        self.assertEqual(self.p.method_log[0][0], 'lone tally')
         self.assertTrue(self.p.method_log[0][1])
-        self.assertEqual(self.p.method_log[1][0], 'lone tally')
+        self.assertEqual(self.p.method_log[1][0], 'only place')
         self.assertTrue(self.p.method_log[1][1])
         self.assertEqual(len(self.p.method_log), 2)
 
 
 class PuzzleMultipleSolutionTests(unittest.TestCase):
     def setUp(self):
-        self.p = Puzzle("Puzzle Name",
-                        '000801000000000430500000000000070800000000100020030000600000075003400000000200600')
-        solve_puzzle(self.p)
+        self.p = solve_puzzle('000801000000000430500000000000070800000000100020030000600000075003400000000200600',
+                     "Puzzle Name")
 
     def test_puzzle_name(self):
         self.assertEqual(self.p.name, "Puzzle Name")

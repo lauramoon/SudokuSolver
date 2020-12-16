@@ -107,18 +107,16 @@ def main():
 
     # for each puzzle in the list
     for num in range(0, len(puzzle_list)):
-        # create the puzzle
-        current_puzzle = Puzzle(file_name + "-" + str(num+1), puzzle_list[num][0])
+        # try to solve the puzzle
+        current_puzzle = solve_puzzle(puzzle_list[num][0], file_name + "-" + str(num+1))
         # print info
-        print("Puzzle", current_puzzle.name, "loaded")
-        print("Unknown boxes:", current_puzzle.num_unknown_boxes())
+        print(f"Puzzle {current_puzzle.name}")
+        print(f"Unknown boxes: {current_puzzle.num_unknown_boxes()}")
 
         # if no solution given, print depiction of puzzle
         if puzzle_list[num][1] == "0":
-            current_puzzle.print_pic("")
-
-        # try to solve puzzle
-        solve_puzzle(current_puzzle)
+            print("Puzzle as submitted:")
+            current_puzzle.print_pic("blank")
 
         # if solution found
         if current_puzzle.solved:
@@ -137,19 +135,19 @@ def main():
                 print("Solution found:")
                 current_puzzle.print_pic("solution")
 
-        # if no solution found:
+        # if puzzle was not solved:
         else:
-            print("Unable to solve puzzle")
             if current_puzzle.no_solution:
                 print("No solution for puzzle")
                 print(current_puzzle.error_description)
+                current_puzzle.print_pic("")
             elif current_puzzle.multiple_solution:
                 print("More than one valid solution found")
                 print(current_puzzle.error_description)
                 current_puzzle.print_pic("completion0")
                 current_puzzle.print_pic("completion1")
             elif current_puzzle.too_few_clues:
-                print("Too few clues; all valid puzzles give at least 17 clues")
+                print("Too few clues given; all valid puzzles require at least 17 clues")
             else:
                 print("Progress on puzzle")
                 current_puzzle.print_pic("current")

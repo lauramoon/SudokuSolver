@@ -22,7 +22,11 @@ def lone_tally_check(p):
             # if no values left in tally, the puzzle has an error
             if len(box.tally) == 0:
                 p.no_solution = True
-                p.error_description = f'No possible values for box {key}'
+
+                p.error_description = f'No valid value to put in row {p.box_map[key].row + 1}, ' \
+                                      f'column {p.box_map[key].col + 1}'
+                p.set_final_string()
+                break
 
     p.method_log.append(["lone tally", progress])
 
@@ -60,8 +64,9 @@ def only_place_check(p):
             for j in box_set:
                 # if the value of the box is unknown and the tally set contains it
                 if value in p.box_map[j].tally:
-                    # increment the count and record the box ID
+                    # increment the count
                     count += 1
+                    # record the box ID
                     latest = j
                 # if find more than one instance, go on to the next value
                 if count == 2:
@@ -74,7 +79,11 @@ def only_place_check(p):
             # the value is found in no tally sets, there's an error in the puzzle
             if count == 0:
                 p.no_solution = True
-                p.error_description = f'No place for {value} in axis {key}'
+                p.set_final_string()
+                dims = ['row', 'column', 'big square']
+                p.error_description = f'No place for {value} in {dims[p.axis_map[key].dimension]} ' \
+                                      f'{p.axis_map[key].index + 1}'
+                break
 
     p.method_log.append(["only place", progress])
     if p.num_unknown_boxes() == 0:
@@ -93,12 +102,12 @@ def basic_solve_attempt(p):
         blanks = p.num_unknown_boxes()
 
         # first basic method
-        only_place_check(p)
+        lone_tally_check(p)
         if p.solved or p.no_solution:
             break
 
         # second basic method
-        lone_tally_check(p)
+        only_place_check(p)
         if p.solved or p.no_solution:
             break
 

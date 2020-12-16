@@ -20,8 +20,10 @@ class Puzzle:
         self.puzzle_string = puzzle_string
         # string of 81 digits representing valid, unique solution
         self.solution = ""
-        # string representing valid but not necessarily unique solution
+        # list of strings representing valid but not necessarily unique solutions
         self.valid_completion_list = []
+        # string representing the end of an attempt to solve an invalid puzzle
+        self.final_string = ""
         # dictionary of the 81 boxes in the puzzle
         self.box_map = {}
         # dictionary of the 27 row/column/square axes
@@ -49,8 +51,16 @@ class Puzzle:
         for i in range(0, 81):
             value = int(puzzle_string[i])
             if value != 0:
-                self.update_new_known(i, value)
                 self.box_map[i].given = True
+                # make sure value can legally be put in this box
+                if value in self.box_map[i].tally:
+                    self.update_new_known(i, value)
+                else:
+                    self.no_solution = True
+                    self.error_description = f'Unable to initialize: ' \
+                                             f'{value} cannot be placed in row {self.box_map[i].row +1}, ' \
+                                             f'column  {self.box_map[i].col + 1}'
+                    break
 
     def get_axis(self, dimension, index):
         """
@@ -127,39 +137,33 @@ class Puzzle:
         return count
         
     def print_initial_string(self):
-        s = str()
-        for i in range(0, 81):
-            if self.box_map[i].given:
-                s += str(self.box_map[i].value)
-            else:
-                s += str(0)
-        print("Initial string: ", s)
+        print("Initial string: ", self.puzzle_string)
 
-    def print_current_string(self):
+    def get_current_string(self):
         s = str()
         for i in range(0, 81):
             s += str(self.box_map[i].value)
-        print("Current string: ", s)
+        return s
+
+    def print_current_string(self):
+        print("Current string: ", self.get_current_string())
 
     def print_solution_string(self):
-        s = self.solution
-        print("Final string: ", s)
+        print("Final string: ", self.solution)
 
     def set_solution_string(self):
         if self.num_unknown_boxes() == 0:
-            s = str()
-            for i in range(0, 81):
-                s += str(self.box_map[i].value)
-            self.solution = s
+            self.solution = self.get_current_string()
 
         else:
             print("Puzzle not yet solved; no solution string")
 
+    def set_final_string(self):
+        self.final_string = self.get_current_string()
+
     def add_valid_completion(self):
         if self.num_unknown_boxes() == 0:
-            s = str()
-            for i in range(0, 81):
-                s += str(self.box_map[i].value)
+            s = self.get_current_string()
             if s not in self.valid_completion_list:
                 self.valid_completion_list.append(s)
             if len(self.valid_completion_list) >= 2:
@@ -175,25 +179,22 @@ class Puzzle:
                 self.multiple_solution = True
 
     def print_pic(self, version):
+        # get string for identified version of puzzle to print
+        if version == 'blank':
+            s = self.puzzle_string
+        elif version == "solution":
+            s = self.solution
+        elif version == "completion0":
+            s = self.valid_completion_list[0]
+        elif version == "completion1":
+            s = self.valid_completion_list[1]
+        elif version == "final":
+            s = self.final_string
+        else:
+            s = self.get_current_string()
+
         # replace zeros with blanks for display of puzzle
-        print_list = []
-        for i in range(81):
-
-            if version == "blank":
-                box_value = self.puzzle_string[i]
-            elif version == "solution":
-                box_value = self.solution[i]
-            elif version == "completion0":
-                box_value = self.valid_completion_list[0][i]
-            elif version == "completion1":
-                box_value = self.valid_completion_list[1][i]
-            else:
-                box_value = str(self.box_map[i].value)
-
-            if box_value == 0:
-                print_list.append(" ")
-            else:
-                print_list.append(box_value)
+        print_list = s.replace('0', ' ')
 
         # define rows that don't depend on puzzle values
         # width in characters
